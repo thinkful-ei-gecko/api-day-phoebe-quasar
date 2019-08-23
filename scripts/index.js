@@ -12,18 +12,30 @@ $(document).ready(function() {
       shoppingList.render();
 
     });
-  // api.getItems()
-  //   .then(res => res.json())
-  //   .then((items) => {
-  //     const item = items[0];
-  //     return api.updateItem(15635, { name: 'foobar' });
-  //   })
-  //   .then(res => res.json())
-  //   .then((json) => {
-  //     //console.log(json);
-  //     // alert(`error: ${store.error}`);
-  //   })
-  //   .catch (e => {
-  //     console.log(e);
-  //   });
+  api.getItems()
+    .then(res => res.json())
+    .then((items) => {
+      const item = items[0];
+      return api.updateItem(15635, { name: 'foobar' });
+    })
+    .then( res => {
+      if (!res.ok) {
+        store.error = `${res.status}: ${res.statusText}`;
+        console.log(store.error);
+      } if (res.ok) {
+        store.error = undefined;
+      }
+      return res.json();
+    })
+    .then(json => {
+      store.errorMessage = json.message;
+      console.log(store.errorMessage);
+      //console.log(json);
+      store.findAndUpdate(id, {name: itemName});
+      shopping-list.render();
+    })
+    .catch(e => {
+      store.error = e;
+      console.log(e);
+    });
 });

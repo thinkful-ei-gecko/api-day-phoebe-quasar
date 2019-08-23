@@ -128,10 +128,27 @@ const shoppingList = (function(){
 
       // sending new name to server
       api.updateItem(id, { name: itemName })
-        .then( () => {
+        .then( res => {
+          if (!res.ok) {
+            store.error = `${res.status}: ${res.statusText}`;
+            console.log(store.error);
+          } if (res.ok) {
+            store.error = undefined;
+          }
+          return res.json();
+        })
+        .then(json => {
+          store.errorMessage = json.message;
+          console.log(store.errorMessage);
+          //console.log(json);
           store.findAndUpdate(id, {name: itemName});
           render();
+        })
+        .catch(e => {
+          store.error = e;
+          console.log(e);
         });
+        
         
       // it's merging the new name into the item inside store.items with id==id
       // store.findAndUpdate(id, { name: itemName });

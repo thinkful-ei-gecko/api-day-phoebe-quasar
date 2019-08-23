@@ -34,25 +34,25 @@ const api = (function() {
       method: 'PATCH', 
       headers: {'Content-Type': 'application/json'}, 
       body: JSON.stringify(updateData)
-    })
-      .then(res => {
-        if (!res.ok) {
-          store.error = `${res.status}: ${res.statusText}`;
-          console.log(store.error);
-        } if (res.ok) {
-          store.error = undefined;
-        }
-        return res.json();
-      })
-      .then(json => {
-        store.errorMessage = json.message;
-        console.log(store.errorMessage);
-        //console.log(json);
-      })
-      .catch(e => {
-        store.error = e;
-        console.log(e);
-      });
+    });
+      // .then(res => {
+      //   if (!res.ok) {
+      //     store.error = `${res.status}: ${res.statusText}`;
+      //     console.log(store.error);
+      //   } if (res.ok) {
+      //     store.error = undefined;
+      //   }
+      //   return res.json();
+      // })
+      // .then(json => {
+      //   store.errorMessage = json.message;
+      //   console.log(store.errorMessage);
+      //   //console.log(json);
+      // })
+      // .catch(e => {
+      //   store.error = e;
+      //   console.log(e);
+      // });
   };
 
   const deleteItem = function (id) {
