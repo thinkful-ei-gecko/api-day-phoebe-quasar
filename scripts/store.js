@@ -38,6 +38,7 @@ const store = (function(){
     hideCheckedItems: false,
     searchTerm: '',
     error: '',
+    errorMessage: '',
 
     addItem,
     findById,

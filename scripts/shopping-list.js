@@ -54,11 +54,14 @@ const shoppingList = (function(){
     }
   
     if (store.error) {
-      $('.error-div').html(`Error: ${store.error}`);
+      console.log('render error body');
+      $('.js-error-message').html(`<p>Error: ${store.error}</p>`);
+    } else 
+    {
+      $('.js-error-message').empty();
     }
 
     // render the shopping list in the DOM
-    console.log('`render` ran');
     const shoppingListItemsString = generateShoppingItemsString(items);
   
     // insert that HTML into the DOM
@@ -71,14 +74,10 @@ const shoppingList = (function(){
       event.preventDefault();
       const newItemName = $('.js-shopping-list-entry').val();
       $('.js-shopping-list-entry').val('');
-      if (newItemName) {
-        api.createItem(newItemName)
-          .then(res => res.json())
-          .then((newItem) => {
-            store.addItem(newItem);
-            render();
-          });
-      }
+      api.createItem(newItemName);
+        
+      
+    
     });
   }
   
@@ -94,19 +93,9 @@ const shoppingList = (function(){
       const item = store.findById(id);
 
       api.updateItem(id, {checked: !item.checked} )
-        .then( res => {
-          if (res.ok) {
-            store.findAndUpdate(id, {checked: !item.checked});
-            store.error = '';
-          }
-          if (!res.ok) {
-            store.error = {code: res.message};
-            console.log('test');
-          }
+        .then( () => {
+          store.findAndUpdate(id, {checked: !item.checked});
           render();
-        })
-        .catch(e => {
-          console.log(`error: ${e}`);
         });
     });
   }
@@ -138,31 +127,12 @@ const shoppingList = (function(){
       const itemName = $(event.currentTarget).find('.shopping-item').val();
 
       // sending new name to server
-      api.updateItem(id, { name: itemName } )
-        .then( res => {
-          if (res.ok) {
-            store.findAndUpdate(id, {name: itemName});
-            store.error= '';
-          }
-          if (!res.ok) {
-            store.error = {code: res.message};
-            console.log('test');
-          }
+      api.updateItem(id, { name: itemName })
+        .then( () => {
+          store.findAndUpdate(id, {name: itemName});
           render();
-        })
-        // .catch(e => {
-        //   console.log(`error: ${e}`);
-        // });
-      // .then( res => {
-        //   if (res.ok) {
-        //     store.findAndUpdate(id, { name: itemName });
-        //     render();
-        //   }
-        // })
-        // .catch(e => {
-        //   console.log(`error: ${e}`);
-        // });
-
+        });
+        
       // it's merging the new name into the item inside store.items with id==id
       // store.findAndUpdate(id, { name: itemName });
       store.setItemIsEditing(id, false);
