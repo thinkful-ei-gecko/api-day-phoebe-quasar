@@ -85,8 +85,18 @@ const shoppingList = (function(){
   function handleItemCheckClicked() {
     $('.js-shopping-list').on('click', '.js-item-toggle', event => {
       const id = getItemIdFromElement(event.currentTarget);
-      store.findAndToggleChecked(id);
-      render();
+      const item = store.findById(id);
+
+      api.updateItem(id, {checked: !item.checked} )
+        .then( res => {
+          if (res.ok) {
+            store.findAndUpdate(id, {checked: !item.checked});
+            render();
+          }
+        })
+        .catch(e => {
+          console.log(`error: ${e}`);
+        });
     });
   }
   
@@ -107,9 +117,23 @@ const shoppingList = (function(){
       event.preventDefault();
       const id = getItemIdFromElement(event.currentTarget);
       const itemName = $(event.currentTarget).find('.shopping-item').val();
-      store.findAndUpdateName(id, itemName);
+
+      // sending new name to server
+      api.updateItem(id, { name: itemName } )
+        .then( res => {
+          if (res.ok) {
+            store.findAndUpdate(id, { name: itemName });
+            render();
+          }
+        })
+        .catch(e => {
+          console.log(`error: ${e}`);
+        });
+
+      // it's merging the new name into the item inside store.items with id==id
+      // store.findAndUpdate(id, { name: itemName });
       store.setItemIsEditing(id, false);
-      render();
+
     });
   }
   

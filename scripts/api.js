@@ -23,6 +23,7 @@ const api = (function() {
 
   };
   
+  // updateData is an object containing key-values intended to be updated
   const updateItem = function (id, updateData) {
     return fetch(`${BASE_URL}/items/${id}`, {
       method: 'PATCH', 
