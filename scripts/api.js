@@ -15,12 +15,20 @@ const api = (function() {
 
     newItem = JSON.stringify(newItem);
 
-    return fetch(`${BASE_URL}/items`, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: newItem});
+    return fetch(`${BASE_URL}/items`, {
+      method: 'POST', 
+      headers: {'Content-Type': 'application/json'}, 
+      body: newItem
+    });
 
   };
   
   const updateItem = function (id, updateData) {
-    return fetch(`${BASE_URL}/items/${id}`, {method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(updateData)});
+    return fetch(`${BASE_URL}/items/${id}`, {
+      method: 'PATCH', 
+      headers: {'Content-Type': 'application/json'}, 
+      body: JSON.stringify(updateData)
+    });
   };
 
   return {
