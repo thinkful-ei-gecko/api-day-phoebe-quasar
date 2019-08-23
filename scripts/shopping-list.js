@@ -53,7 +53,10 @@ const shoppingList = (function(){
       items = items.filter(item => item.name.includes(store.searchTerm));
     }
   
-    // alert(`error: ${store.error}`);
+    if (store.error) {
+      $('.error-div').html(`Error: ${store.error}`);
+    }
+
     // render the shopping list in the DOM
     console.log('`render` ran');
     const shoppingListItemsString = generateShoppingItemsString(items);
@@ -94,6 +97,7 @@ const shoppingList = (function(){
         .then( res => {
           if (res.ok) {
             store.findAndUpdate(id, {checked: !item.checked});
+            store.error = '';
           }
           if (!res.ok) {
             store.error = {code: res.message};
@@ -136,9 +140,9 @@ const shoppingList = (function(){
       // sending new name to server
       api.updateItem(id, { name: itemName } )
         .then( res => {
-          console.log(res, res.status);
           if (res.ok) {
             store.findAndUpdate(id, {name: itemName});
+            store.error= '';
           }
           if (!res.ok) {
             store.error = {code: res.message};

@@ -30,8 +30,7 @@ const api = (function() {
       headers: {'Content-Type': 'application/json'}, 
       body: JSON.stringify(updateData)
     }).then(res => {
-      console.log(res);
-      return res;
+      store.error = res.status + res.statusText;
     }).catch(e => {
       console.log(e);
       return e;
