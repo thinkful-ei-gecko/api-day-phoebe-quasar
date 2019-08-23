@@ -53,6 +53,7 @@ const shoppingList = (function(){
       items = items.filter(item => item.name.includes(store.searchTerm));
     }
   
+    // alert(`error: ${store.error}`);
     // render the shopping list in the DOM
     console.log('`render` ran');
     const shoppingListItemsString = generateShoppingItemsString(items);
@@ -61,18 +62,20 @@ const shoppingList = (function(){
     $('.js-shopping-list').html(shoppingListItemsString);
   }
   
-  
+
   function handleNewItemSubmit() {
     $('#js-shopping-list-form').submit(function (event) {
       event.preventDefault();
       const newItemName = $('.js-shopping-list-entry').val();
       $('.js-shopping-list-entry').val('');
-      api.createItem(newItemName)
-        .then(res => res.json())
-        .then((newItem) => {
-          store.addItem(newItem);
-          render();
-        });
+      if (newItemName) {
+        api.createItem(newItemName)
+          .then(res => res.json())
+          .then((newItem) => {
+            store.addItem(newItem);
+            render();
+          });
+      }
     });
   }
   
@@ -91,8 +94,12 @@ const shoppingList = (function(){
         .then( res => {
           if (res.ok) {
             store.findAndUpdate(id, {checked: !item.checked});
-            render();
           }
+          if (!res.ok) {
+            store.error = {code: res.message};
+            console.log('test');
+          }
+          render();
         })
         .catch(e => {
           console.log(`error: ${e}`);
@@ -106,9 +113,17 @@ const shoppingList = (function(){
       // get the index of the item in store.items
       const id = getItemIdFromElement(event.currentTarget);
       // delete the item
-      store.findAndDelete(id);
+      api.deleteItem(id)
+        .then( res => {
+          if (res.ok) {
+            store.findAndDelete(id);
+            render();
+          }
+        })
+        .catch(e => {
+          console.log(`error: ${e}`);
+        });
       // render the updated shopping list
-      render();
     });
   }
   
@@ -121,14 +136,28 @@ const shoppingList = (function(){
       // sending new name to server
       api.updateItem(id, { name: itemName } )
         .then( res => {
+          console.log(res, res.status);
           if (res.ok) {
-            store.findAndUpdate(id, { name: itemName });
-            render();
+            store.findAndUpdate(id, {name: itemName});
           }
+          if (!res.ok) {
+            store.error = {code: res.message};
+            console.log('test');
+          }
+          render();
         })
-        .catch(e => {
-          console.log(`error: ${e}`);
-        });
+        // .catch(e => {
+        //   console.log(`error: ${e}`);
+        // });
+      // .then( res => {
+        //   if (res.ok) {
+        //     store.findAndUpdate(id, { name: itemName });
+        //     render();
+        //   }
+        // })
+        // .catch(e => {
+        //   console.log(`error: ${e}`);
+        // });
 
       // it's merging the new name into the item inside store.items with id==id
       // store.findAndUpdate(id, { name: itemName });
